@@ -14,20 +14,17 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 approved_users = set(os.getenv("APPROVED_USERS").split(','))
 approved_users = {int(user) for user in approved_users}
 
-async def start(update: Update, context):
-    await update.message.reply_text('Hello! I am your GPT-powered chatbot. How can I help you today?')
-
 async def handle_message(update: Update, context):
     user_id = update.effective_user.id
     if user_id not in approved_users:
-        await update.message.reply_text(f"Unauthorized user. Access denied. Your user is {user_id}, approved users are {approved_users}")
+        await update.message.reply_text(f"Unauthorized user. Access denied. Your user is {user_id}")
         return
     
     user_message = update.message.text
     
     # Generate response using GPT
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": user_message}
@@ -39,8 +36,6 @@ async def handle_message(update: Update, context):
 
 def main():
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
-
-    application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     application.run_polling()
