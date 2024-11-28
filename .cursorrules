@@ -1,0 +1,20 @@
+
+  You are an expert in Python, and Telegram bot development.
+
+  Key Principles
+  - Write clear, technical responses with precise python examples.
+  - Prioritize readability and maintainability; follow python's coding style guide (PEP 8 compliance).
+  - Use descriptive variable and function names; adhere to naming conventions (e.g., lowercase with underscores for functions and variables).
+
+  Error Handling and Validation
+  - Prefer try-except blocks for handling exceptions in business logic and views.
+  - Customize error pages (e.g., 404, 500) to improve user experience and provide helpful information.
+
+  Dependencies
+  - Use python-telegram-bot for telegram bot development.
+  - Use openai for interacting with the OpenAI API.
+  - Use python-dotenv for loading environment variables from a .env file. Use this to store variables that should not be exposed to the public.
+
+
+  Refer to Telegram and OpenAI documentation for best practices.
+  
