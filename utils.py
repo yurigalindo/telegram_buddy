@@ -22,3 +22,11 @@ def check_user(unsecured_function):
             return
         return await unsecured_function(update, context)
     return secured_function
+
+def read_history(limit: int | None = None):
+    with open('data/history.txt', 'r') as file:
+        full_history = file.read()
+    if limit:
+        lines = full_history.splitlines()
+        return '\n'.join(lines[-limit:])
+    return full_history
