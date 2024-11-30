@@ -7,6 +7,7 @@ def main():
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_message))
 
+    application.add_handler(CommandHandler("gpt", gpt))
     application.run_polling()
 
 if __name__ == '__main__':
