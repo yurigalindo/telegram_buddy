@@ -14,8 +14,12 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @check_user
 async def save_message(update: Update, context):
-    with open('data/history.txt', 'a') as file:
-        file.write(f"{parse_message(update.message)}\n")
+    try:
+        with open('data/history.txt', 'a') as file:
+            file.write(f"{parse_message(update.message)}\n")
+    except Exception as e:
+        print(f"Error saving message: {e}")
+        # Optionally notify the user or log the error
 
 @check_user
 async def gpt(update: Update, context):
@@ -24,10 +28,7 @@ async def gpt(update: Update, context):
 
 @check_user
 async def defend_stefani(update: Update, context):
-    if len(update.message.text) > len("defender_stefani") + 2:
-        history = read_history(limit=int(update.message.text[len("defender_stefani") + 2:]))
-    else:
-        history = read_history()
+    history = read_history()
     response = await _gpt_call(history, STEFANI_PROMPT)
     await update.message.reply_text(response)
 
