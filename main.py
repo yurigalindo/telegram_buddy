@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from openai import OpenAI
-
+from utils import parse_message
 # Load environment variables
 load_dotenv()
 
@@ -20,19 +20,8 @@ async def handle_message(update: Update, context):
         await update.message.reply_text(f"Unauthorized user. Access denied. Your user is {user_id}")
         return
     
-    user_message = update.message.text
-    
-    # Generate response using GPT
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": user_message}
-        ]
-    )
-    
-    bot_response = response.choices[0].message.content
-    await update.message.reply_text(bot_response)
+    with open('data/history.txt', 'a') as file:
+        file.write(f"{parse_message(update.message)}\n")
 
 def main():
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
