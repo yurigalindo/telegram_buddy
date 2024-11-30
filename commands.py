@@ -38,7 +38,7 @@ async def _gpt_call(message: str, system_prompt: str):
         ]
     messages.append({"role": "user", "content": message})
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=messages
     )
     return response.choices[0].message.content
