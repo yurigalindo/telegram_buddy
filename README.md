@@ -1,10 +1,10 @@
 # Telegram GPT Bot
 
-A simple Telegram bot powered by OpenAI's GPT-3.5 that responds to messages.
+A Telegram bot powered by GPT-4-mini that responds to messages and helps manage group conversations.
 
 ## Prerequisites
 
-- Python 3.7+
+- Python 3.12
 - A Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
 - An OpenAI API Key
 
@@ -28,6 +28,7 @@ A simple Telegram bot powered by OpenAI's GPT-3.5 that responds to messages.
    TELEGRAM_TOKEN=your_telegram_bot_token
    OPENAI_API_KEY=your_openai_api_key
    APPROVED_USERS=user_id1,user_id2
+   APPROVED_CHATS=chat_id1,chat_id2
    ```
 
 ## Running the Bot
@@ -38,10 +39,29 @@ A simple Telegram bot powered by OpenAI's GPT-3.5 that responds to messages.
    python main.py
    ```
 
-## Usage
+## Features
 
-1. Start a chat with your bot on Telegram
-2. Send `/start` to begin
-3. Send any message to get a response from GPT
+The bot supports the following commands:
 
-Note: Only users with IDs listed in APPROVED_USERS will be able to interact with the bot.
+- `/gpt <message>` - Get a response from GPT-4-mini
+- `/defender_stefani` - Defends Stefani's position in recent conversations
+- `/resolver_discussao` - Analyzes and helps resolve recent group conflicts
+- `/pesquisar <query>` - Search through chat history
+- `/resumir` - Summarizes recent chat history
+
+The bot also automatically saves messages for context and history management.
+
+## Security
+
+- Only users with IDs listed in APPROVED_USERS can interact with the bot
+- Only chats with IDs listed in APPROVED_CHATS are allowed
+- Messages are stored locally in `data/history.txt`
+- Chat history is automatically trimmed when it exceeds size limits
+
+## Logging
+
+The bot logs errors to both:
+- Console output
+- `logs/bot.log` file
+
+Note: Only ERROR level logs are recorded.
