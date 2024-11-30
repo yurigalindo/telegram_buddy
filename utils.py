@@ -2,7 +2,12 @@ import pytz
 import os
 from dotenv import load_dotenv
 from telegram import Update
+import logging
 load_dotenv(override=True)
+
+MAX_CHARS = 450_000  # less than 128k tokens
+
+logger = logging.getLogger(__name__)
 
 # Load approved users from environment variable
 approved_users = set(os.getenv("APPROVED_USERS").split(','))
@@ -37,9 +42,25 @@ def check_user(unsecured_function):
     return secured_function
 
 def read_history(limit: int | None = None):
-    with open('data/history.txt', 'r') as file:
-        full_history = file.read()
-    if limit:
-        lines = full_history.splitlines()
-        return '\n'.join(lines[-limit:])
-    return full_history
+    try:
+        with open('data/history.txt', 'r') as file:
+            content = file.read()
+            
+        # Trim file if it exceeds max_chars
+        if len(content) > MAX_CHARS:
+            lines = content.splitlines()
+            keep_lines = lines[len(lines)//4:]  # Remove first 25% of lines
+            
+            # Write back the trimmed content
+            with open('data/history.txt', 'w') as f:
+                content = '\n'.join(keep_lines) + '\n'
+                f.write(content)
+        
+        if limit:
+            lines = content.splitlines()
+            return '\n'.join(lines[-limit:])
+        return content
+
+    except Exception as e:
+        logger.error(f"Error reading history file: {e}", exc_info=True)
+        return ""
