@@ -1,7 +1,7 @@
 import os
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-from commands import gpt, save_message, defend_stefani
+from commands import gpt, save_message, defend_stefani, solve_discussion
 
 def main():
     application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
@@ -9,6 +9,7 @@ def main():
 
     application.add_handler(CommandHandler("gpt", gpt))
     application.add_handler(CommandHandler("defender_stefani", defend_stefani))
+    application.add_handler(CommandHandler("resolver_discussao", solve_discussion))
     application.run_polling()
 
 if __name__ == '__main__':

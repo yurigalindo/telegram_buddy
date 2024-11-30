@@ -6,7 +6,7 @@ from utils import parse_message, check_user, read_history
 
 # Load prompts
 STEFANI_PROMPT = open('prompts/defend_stefani.txt', 'r').read()
-
+DISCUSSION_PROMPT = open('prompts/solve_discussion.txt', 'r').read()
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -46,6 +46,12 @@ async def gpt(update: Update, context):
 async def defend_stefani(update: Update, context):
     history = read_history()
     response = await _gpt_call(history, STEFANI_PROMPT)
+    await update.message.reply_text(response)
+
+@check_user
+async def solve_discussion(update: Update, context):
+    history = read_history()
+    response = await _gpt_call(history, DISCUSSION_PROMPT)
     await update.message.reply_text(response)
 
 async def _gpt_call(message: str, system_prompt: str):
