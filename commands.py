@@ -15,11 +15,27 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 @check_user
 async def save_message(update: Update, context):
     try:
-        with open('data/history.txt', 'a') as file:
+        max_chars = 4_000_000  # 1 million characters
+        history_file = 'data/history.txt'
+        
+        # Add new message
+        with open(history_file, 'a') as file:
             file.write(f"{parse_message(update.message)}\n")
+        
+        # Check file size and trim if necessary
+        with open(history_file, 'r') as file:
+            content = file.read()
+            if len(content) > max_chars:
+                # Keep the last 75% of the content
+                lines = content.splitlines()
+                keep_lines = lines[len(lines)//4:]  # Remove first 25% of lines
+                
+                # Write back the trimmed content
+                with open(history_file, 'w') as f:
+                    f.write('\n'.join(keep_lines) + '\n')
+                    
     except Exception as e:
-        print(f"Error saving message: {e}")
-        # Optionally notify the user or log the error
+        print(f"Error managing message history: {e}")
 
 @check_user
 async def gpt(update: Update, context):
