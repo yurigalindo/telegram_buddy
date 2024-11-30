@@ -64,3 +64,16 @@ def read_history(limit: int | None = None):
     except Exception as e:
         logger.error(f"Error reading history file: {e}", exc_info=True)
         return ""
+    
+def crop_last_apparition(username: str):
+    """
+    Returns all messages that appear after the last message from the specified username.
+    If username is not found, returns whole history.
+    """
+    history = read_history()
+    lines = history.splitlines()
+    for i, line in enumerate(reversed(lines)):
+        if username in line.split(" - ")[1].split(":")[0]:
+            return "".join(lines[-i:])
+
+    return history

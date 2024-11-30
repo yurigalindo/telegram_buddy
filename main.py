@@ -2,7 +2,7 @@ import os
 import logging
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-from commands import gpt, save_message, defend_stefani, solve_discussion, search_history
+from commands import gpt, save_message, defend_stefani, solve_discussion, search_history, summarize_history
 
 def main():
     # Update logging to only show ERROR level
@@ -24,6 +24,7 @@ def main():
         application.add_handler(CommandHandler("defender_stefani", defend_stefani))
         application.add_handler(CommandHandler("resolver_discussao", solve_discussion))
         application.add_handler(CommandHandler("pesquisar", search_history))
+        application.add_handler(CommandHandler("resumir", summarize_history))
         application.run_polling()
         
     except Exception as e:
