@@ -73,7 +73,9 @@ def crop_last_apparition(username: str):
     history = read_history()
     lines = history.splitlines()
     for i, line in enumerate(reversed(lines)):
-        if username in line.split(" - ")[1].split(":")[0]:
-            return "".join(lines[-i:])
-
+        try:
+            if username in line.split(" - ")[1].split(":")[0]:
+                return "".join(lines[-i:])
+        except Exception as e:
+            continue
     return history
