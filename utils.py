@@ -72,10 +72,15 @@ def crop_last_apparition(username: str):
     """
     history = read_history()
     lines = history.splitlines()
+    last_contiguous = True # if the last messages come from the username, disregard them
     for i, line in enumerate(reversed(lines)):
         try:
             if username in line.split(" - ")[1].split(":")[0]:
+                if last_contiguous:
+                    continue
                 return "".join(lines[-i:])
+            else:
+                last_contiguous = False
         except Exception as e:
             continue
     return history
