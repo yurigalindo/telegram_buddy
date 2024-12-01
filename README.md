@@ -1,6 +1,6 @@
 # Telegram GPT Bot
 
-A Telegram bot powered by GPT-4-mini that responds to messages and helps manage group conversations.
+A Telegram bot powered by GPT-4-mini that has fun and helpful functions for a group of friends.
 
 ## Prerequisites
 
@@ -53,8 +53,7 @@ The bot also automatically saves messages for context and history management.
 
 ## Security
 
-- Only users with IDs listed in APPROVED_USERS can interact with the bot
-- Only chats with IDs listed in APPROVED_CHATS are allowed
+- Only accepts commands either from the users listed in APPROVED_USERS or from the chats listed in APPROVED_CHATS
 - Messages are stored locally in `data/history.txt`
 - Chat history is automatically trimmed when it exceeds size limits
 
@@ -64,4 +63,6 @@ The bot logs errors to both:
 - Console output
 - `logs/bot.log` file
 
-Note: Only ERROR level logs are recorded.
+Notes:
+- Only ERROR level logs are recorded.
+- Since it was developed only for one group chat, history from all chats and conversations are stored in the same file.
