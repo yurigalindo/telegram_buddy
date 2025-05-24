@@ -20,14 +20,14 @@ approved_chats = set(os.getenv("APPROVED_CHATS").split(','))
 approved_chats = {int(chat) for chat in approved_chats}
 
 
-async def gpt_call(message: str, system_prompt: str):
+async def gpt_call(message: str, system_prompt: str, model: str = "gpt-4o-mini"):
     try:
         messages=[
             {"role": "system", "content": system_prompt},
         ]
         messages.append({"role": "user", "content": message})
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=model,
             messages=messages
         )
         return response.choices[0].message.content

@@ -16,8 +16,8 @@ load_dotenv()
 
 @check_user
 async def gpt(update: Update, context):
-    response = await gpt_call(update.message.text[5:], "You are a helpful assistant.")
-    await update.message.reply_text(f"GPT says:\n{response}")
+    response = await gpt_call(update.message.text[5:], "You are a helpful assistant.",model='gpt-4.1-mini')
+    await update.message.reply_text(response)
 
 @check_user
 async def defend_stefani(update: Update, context):
