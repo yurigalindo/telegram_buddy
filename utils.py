@@ -5,7 +5,7 @@ from telegram import Update
 import logging
 load_dotenv(override=True)
 
-MAX_CHARS = 100_000  # less than 30k tokens
+MAX_CHARS = 360_000  # less than 128k tokens
 
 logger = logging.getLogger(__name__)
 
