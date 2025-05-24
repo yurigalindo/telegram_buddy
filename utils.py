@@ -60,6 +60,7 @@ def read_history(limit: int | None = None):
                     break
                 chars_to_remove_count += len(line)
                 lines_to_remove_count += 1
+            lines_to_remove_count += 50 # remove some extra buffer so that it doesn't run again if called on a short interval
             
             keep_lines = lines[lines_to_remove_count:]
             
