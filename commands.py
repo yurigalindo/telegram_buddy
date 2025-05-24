@@ -35,7 +35,7 @@ async def gpt(update: Update, context):
 
 @check_user
 async def defend_stefani(update: Update, context):
-    history = read_history()
+    history = read_history(limit=400)
     response = await _gpt_call(history, STEFANI_PROMPT)
     await update.message.reply_text(response)
 
