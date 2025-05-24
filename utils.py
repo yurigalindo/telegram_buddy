@@ -47,13 +47,25 @@ def read_history(limit: int | None = None):
             content = file.read()
             
         # Trim file if it exceeds max_chars
+        # This is a bit IO intensive, but the file isn't that big and this function only runs ocasionally
         if len(content) > MAX_CHARS:
-            lines = content.splitlines()
-            keep_lines = lines[len(lines)//4:]  # Remove first 25% of lines
+            excess_chars = len(content) - MAX_CHARS
+            lines = content.splitlines(True) # Keep newline characters
+            
+            chars_to_remove_count = 0
+            lines_to_remove_count = 0
+            
+            for line in lines:
+                if chars_to_remove_count >= excess_chars:
+                    break
+                chars_to_remove_count += len(line)
+                lines_to_remove_count += 1
+            
+            keep_lines = lines[lines_to_remove_count:]
             
             # Write back the trimmed content
             with open('data/history.txt', 'w') as f:
-                content = '\n'.join(keep_lines) + '\n'
+                content = ''.join(keep_lines)
                 f.write(content)
         
         if limit:
