@@ -44,6 +44,7 @@ A Telegram bot powered by GPT-4-mini that has fun and helpful functions for a gr
 The bot supports the following commands:
 
 - `/gpt <message>` - Get a response from GPT-4-mini
+- `/perguntar_historico <message>` - Get a response from GPT-4-mini while giving the whole chat history as context
 - `/defender_stefani` - Defends Stefani's position in recent conversations
 - `/resolver_discussao` - Analyzes and helps resolve recent group conflicts
 - `/pesquisar <query>` - Search through chat history

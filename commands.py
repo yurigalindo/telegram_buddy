@@ -12,6 +12,7 @@ STEFANI_PROMPT = open('prompts/defend_stefani.txt', 'r').read()
 DISCUSSION_PROMPT = open('prompts/solve_discussion.txt', 'r').read()
 SEARCH_HISTORY_PROMPT = open('prompts/search_history.txt', 'r').read()
 SUMMARIZE_HISTORY_PROMPT = open('prompts/summarize_history.txt', 'r').read()
+ASK_HISTORY_PROMPT = open('prompts/ask_history.txt', 'r').read()
 load_dotenv()
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -50,6 +51,14 @@ async def search_history(update: Update, context):
     what_to_search = " ".join(update.message.text.split(" ")[1:]) # ignore the command
     prompt = "You need to search for this: " + what_to_search + "\n This is the chat history: \n" + history
     response = await _gpt_call(prompt, SEARCH_HISTORY_PROMPT)
+    await update.message.reply_text(response)
+
+@check_user
+async def ask_history(update: Update, context):
+    history = read_history()
+    message = " ".join(update.message.text.split(" ")[1:]) # ignore the command
+    prompt = "This is the user message: " + message + "\n This is the chat history: \n" + history
+    response = await _gpt_call(prompt, ASK_HISTORY_PROMPT)
     await update.message.reply_text(response)
 
 @check_user
