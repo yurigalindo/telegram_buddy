@@ -3,17 +3,46 @@ import os
 from dotenv import load_dotenv
 from telegram import Update
 import logging
+from openai import OpenAI
+
 load_dotenv(override=True)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+logger = logging.getLogger(__name__)
 
 MAX_CHARS = 360_000  # less than 128k tokens
 
-logger = logging.getLogger(__name__)
 
 # Load approved users from environment variable
 approved_users = set(os.getenv("APPROVED_USERS").split(','))
 approved_users = {int(user) for user in approved_users}
 approved_chats = set(os.getenv("APPROVED_CHATS").split(','))
 approved_chats = {int(chat) for chat in approved_chats}
+
+
+async def gpt_call(message: str, system_prompt: str):
+    try:
+        messages=[
+            {"role": "system", "content": system_prompt},
+        ]
+        messages.append({"role": "user", "content": message})
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        logger.error(f"Error calling GPT: {e}", exc_info=True)
+        return "I'm sorry, I'm having trouble connecting to GPT."
+    
+def check_user(unsecured_function):
+    async def secured_function(update: Update, context):
+        user_id = update.effective_user.id
+        chat_id = update.effective_chat.id
+        if user_id not in approved_users and chat_id not in approved_chats:
+            await update.message.reply_text(f"Unauthorized user. Access denied.")
+            return
+        return await unsecured_function(update, context)
+    return secured_function
 
 def parse_message(message):
     if not message:
@@ -31,15 +60,15 @@ def parse_message(message):
 
     return f"{timestamp} - {user}: {text}"
 
-def check_user(unsecured_function):
-    async def secured_function(update: Update, context):
-        user_id = update.effective_user.id
-        chat_id = update.effective_chat.id
-        if user_id not in approved_users and chat_id not in approved_chats:
-            await update.message.reply_text(f"Unauthorized user. Access denied.")
-            return
-        return await unsecured_function(update, context)
-    return secured_function
+@check_user
+async def save_message(update: Update, context):
+    try:
+        history_file = 'data/history.txt'
+        # Add new message
+        with open(history_file, 'a') as file:
+            file.write(f"{parse_message(update.message)}\n")
+    except Exception as e:
+        logger.error(f"Error managing message history: {e}", exc_info=True)
 
 def read_history(limit: int | None = None):
     try:

@@ -2,7 +2,8 @@ import os
 import logging
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-from commands import gpt, save_message, defend_stefani, solve_discussion, search_history, summarize_history, ask_history
+from commands import gpt, defend_stefani, solve_discussion, search_history, summarize_history, ask_history
+from utils import save_message
 
 def main():
     # Update logging to only show ERROR level
