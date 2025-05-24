@@ -18,7 +18,7 @@ def main():
     
     try:
         application = Application.builder().token(os.getenv("TELEGRAM_TOKEN")).build()
-        application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_message))
+        application.add_handler(MessageHandler(filters.TEXT, save_message))
 
         application.add_handler(CommandHandler("gpt", gpt))
         application.add_handler(CommandHandler("perguntar_historico", ask_history))

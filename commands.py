@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from telegram import Update
-from utils import parse_message, check_user, read_history, crop_last_apparition
+from utils import parse_message, check_user, read_history, crop_last_apparition, save_bot_message
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,18 +31,21 @@ async def save_message(update: Update, context):
 @check_user
 async def gpt(update: Update, context):
     response = await _gpt_call(update.message.text[5:], "You are a helpful assistant.")
-    await update.message.reply_text(f"GPT says:\n{response}")
+    save_bot_message(response)
+    await update.message.reply_text("*O bot respondeu a pergunta*")
 
 @check_user
 async def defend_stefani(update: Update, context):
     history = read_history(limit=400)
     response = await _gpt_call(history, STEFANI_PROMPT)
+    save_bot_message("*O bot defendeu a Stefani*")
     await update.message.reply_text(response)
 
 @check_user
 async def solve_discussion(update: Update, context):
     history = read_history()
     response = await _gpt_call(history, DISCUSSION_PROMPT)
+    save_bot_message("*O bot resolveu a discussão*")
     await update.message.reply_text(response)
 
 @check_user
@@ -51,6 +54,7 @@ async def search_history(update: Update, context):
     what_to_search = " ".join(update.message.text.split(" ")[1:]) # ignore the command
     prompt = "You need to search for this: " + what_to_search + "\n This is the chat history: \n" + history
     response = await _gpt_call(prompt, SEARCH_HISTORY_PROMPT)
+    save_bot_message(response)
     await update.message.reply_text(response)
 
 @check_user
@@ -59,12 +63,14 @@ async def ask_history(update: Update, context):
     message = " ".join(update.message.text.split(" ")[1:]) # ignore the command
     prompt = "This is the user message: " + message + "\n This is the chat history: \n" + history
     response = await _gpt_call(prompt, ASK_HISTORY_PROMPT)
+    save_bot_message(response)
     await update.message.reply_text(response)
 
 @check_user
 async def summarize_history(update: Update, context):
     history = crop_last_apparition(update.message.from_user.username)
     response = await _gpt_call(history, SUMMARIZE_HISTORY_PROMPT)
+    save_bot_message("*O bot resumiu a conversa*")
     await update.message.reply_text(response)
 
 async def _gpt_call(message: str, system_prompt: str):

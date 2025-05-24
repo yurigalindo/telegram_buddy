@@ -2,7 +2,9 @@ import pytz
 import os
 from dotenv import load_dotenv
 from telegram import Update
+from datetime import datetime
 import logging
+
 load_dotenv(override=True)
 
 MAX_CHARS = 360_000  # less than 128k tokens
@@ -40,6 +42,17 @@ def check_user(unsecured_function):
             return
         return await unsecured_function(update, context)
     return secured_function
+
+def save_bot_message(bot_reply):
+    user = 'BayBuddyBot'
+    text = bot_reply
+    timestamp = datetime.now(pytz.timezone('America/Sao_Paulo')).strftime('%Y:%m:%d:%H:%M')
+    try:
+        history_file = 'data/history.txt'
+        with open(history_file, 'a') as file:
+            file.write(f"{timestamp} - {user}: {text}\n")
+    except Exception as e:
+        logger.error(f"Error managing message history: {e}", exc_info=True)
 
 def read_history(limit: int | None = None):
     try:
