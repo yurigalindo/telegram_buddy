@@ -10,6 +10,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logger = logging.getLogger(__name__)
 
 MAX_CHARS = 360_000  # less than 128k tokens
+HISTORY_FILE = 'data/history.txt'
 
 
 # Load approved users from environment variable
@@ -63,16 +64,14 @@ def parse_message(message):
 @check_user
 async def save_message(update: Update, context):
     try:
-        history_file = 'data/history.txt'
-        # Add new message
-        with open(history_file, 'a') as file:
+        with open(HISTORY_FILE, 'a') as file:
             file.write(f"{parse_message(update.message)}\n")
     except Exception as e:
         logger.error(f"Error managing message history: {e}", exc_info=True)
 
 def read_history(limit: int | None = None):
     try:
-        with open('data/history.txt', 'r') as file:
+        with open(HISTORY_FILE, 'r') as file:
             content = file.read()
             
         # Trim file if it exceeds max_chars
@@ -94,7 +93,7 @@ def read_history(limit: int | None = None):
             keep_lines = lines[lines_to_remove_count:]
             
             # Write back the trimmed content
-            with open('data/history.txt', 'w') as f:
+            with open(HISTORY_FILE, 'w') as f:
                 content = ''.join(keep_lines)
                 f.write(content)
         
