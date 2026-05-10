@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from telegram import Update
-from utils import check_user, read_history, crop_last_apparition, gpt_call
+from utils import check_user, read_history, crop_last_apparition, llm_call, trim_to_context
 import logging
 
 logger = logging.getLogger(__name__)
@@ -13,42 +13,49 @@ SUMMARIZE_HISTORY_PROMPT = open('prompts/summarize_history.txt', 'r').read()
 ASK_HISTORY_PROMPT = open('prompts/ask_history.txt', 'r').read()
 load_dotenv()
 
+DEEPSEEK_MODEL = "deepseek/deepseek-v4-flash"
+
 
 @check_user
 async def gpt(update: Update, context):
-    response = await gpt_call(update.message.text[5:], "You are a helpful assistant.",model='gpt-4.1-mini')
+    response = await llm_call(update.message.text[5:], "You are a helpful assistant.", model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
 
 @check_user
 async def defend_stefani(update: Update, context):
-    history = read_history(limit=400)
-    response = await gpt_call(history, STEFANI_PROMPT)
+    history = read_history()
+    history = trim_to_context(history, DEEPSEEK_MODEL, overhead_chars=len(STEFANI_PROMPT))
+    response = await llm_call(history, STEFANI_PROMPT, model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
 
 @check_user
 async def solve_discussion(update: Update, context):
     history = read_history()
-    response = await gpt_call(history, DISCUSSION_PROMPT)
+    history = trim_to_context(history, DEEPSEEK_MODEL, overhead_chars=len(DISCUSSION_PROMPT))
+    response = await llm_call(history, DISCUSSION_PROMPT, model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
 
 @check_user
 async def search_history(update: Update, context):
+    what_to_search = " ".join(update.message.text.split(" ")[1:])
     history = read_history()
-    what_to_search = " ".join(update.message.text.split(" ")[1:]) # ignore the command
+    history = trim_to_context(history, DEEPSEEK_MODEL, overhead_chars=len(SEARCH_HISTORY_PROMPT) + len(what_to_search) + 100)
     prompt = "You need to search for this: " + what_to_search + "\n This is the chat history: \n" + history
-    response = await gpt_call(prompt, SEARCH_HISTORY_PROMPT)
+    response = await llm_call(prompt, SEARCH_HISTORY_PROMPT, model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
 
 @check_user
 async def ask_history(update: Update, context):
+    message = " ".join(update.message.text.split(" ")[1:])
     history = read_history()
-    message = " ".join(update.message.text.split(" ")[1:]) # ignore the command
+    history = trim_to_context(history, DEEPSEEK_MODEL, overhead_chars=len(ASK_HISTORY_PROMPT) + len(message) + 100)
     prompt = "This is the user message: " + message + "\n This is the chat history: \n" + history
-    response = await gpt_call(prompt, ASK_HISTORY_PROMPT)
+    response = await llm_call(prompt, ASK_HISTORY_PROMPT, model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
 
 @check_user
 async def summarize_history(update: Update, context):
     history = crop_last_apparition(update.message.from_user.username)
-    response = await gpt_call(history, SUMMARIZE_HISTORY_PROMPT)
+    history = trim_to_context(history, DEEPSEEK_MODEL, overhead_chars=len(SUMMARIZE_HISTORY_PROMPT))
+    response = await llm_call(history, SUMMARIZE_HISTORY_PROMPT, model=DEEPSEEK_MODEL)
     await update.message.reply_text(response)
