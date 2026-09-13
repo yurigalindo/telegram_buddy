@@ -13,7 +13,8 @@ SUMMARIZE_HISTORY_PROMPT = open('prompts/summarize_history.txt', 'r').read()
 ASK_HISTORY_PROMPT = open('prompts/ask_history.txt', 'r').read()
 load_dotenv()
 
-DEEPSEEK_MODEL = "deepseek/deepseek-v4-flash"
+DEEPSEEK_MODEL = "deepseek/deepseek-v4.1-flash"
+# DEEPSEEK_MODEL = "x-ai/grok-4.1-fast"
 
 
 @check_user

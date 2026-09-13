@@ -18,7 +18,8 @@ HISTORY_FILE = 'data/history.txt'
 MODEL_MAX_TOKENS = {
     "gpt-4o-mini": 128_000,
     "gpt-4.1-mini": 1_047_576,
-    "deepseek/deepseek-v4-flash": 1_000_000,
+    "deepseek/deepseek-v4.1-flash": 1_000_000,
+    #"x-ai/grok-4.1-fast": 2_000_000,
 }
 RESPONSE_RESERVE_TOKENS = 8_000
 CHARS_PER_TOKEN = 4
